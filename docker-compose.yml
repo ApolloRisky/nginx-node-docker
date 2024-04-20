@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  redis:
+    image: redis:alpine
+    container_name: redis_alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./db/redis/data:/data
+
+  web1:
+    restart: on-failure:3
+    build: ./web
+    hostname: web1
+    ports:
+      - "81:5000"
+
+  web2:
+    restart: on-failure:3
+    build: ./web
+    hostname: web2
+    ports:
+      - "82:5000"
+
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - web1
+      - web2
